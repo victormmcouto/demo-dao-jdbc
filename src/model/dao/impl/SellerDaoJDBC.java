@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +25,44 @@ public class SellerDaoJDBC implements SellerDao {
 	}
 
 	@Override
-	public void insert(Seller Seller) {
-		// TODO Auto-generated method stub
+	public void insert(Seller seller) {
+		PreparedStatement st = null;
+		
+		try {
+			//Statement.RETURN_GENERATED_KEYS é usado para que st retorne as chaves criadas
+			st = conn.prepareStatement("INSERT INTO seller " +
+									   "(Name, Email, BirthDate, BaseSalary, DepartmentId) " +
+									   "VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, seller.getName());
+			st.setString(2, seller.getEmail());
+			st.setDate(3, new java.sql.Date(seller.getBirthDate().getTime()));
+			st.setDouble(4, seller.getBaseSalary());
+			st.setInt(5, seller.getDepartment().getId());
+			
+			//Executa o update no banco de dados causando inserção
+			int rowsAffected = st.executeUpdate();
+			
+			/* Se a inserção ocorreu, recupera as novas chaves geradas e, como
+			   apenas um seller foi inserido, recupera a chave da primeira posição
+			   e atribui a seller*/
+			if (rowsAffected > 0) {
+				ResultSet rs = st.getGeneratedKeys();
+				if (rs.next()) {
+					int id = rs.getInt(1);
+					seller.setId(id);
+				}
+				DB.closeResultSet(rs);
+			//Caso a inserção não seja concluida, cause um erro
+			} else {
+				throw new DbException("Unexpected error! No rows affected!");
+			}
+			
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
@@ -47,9 +84,10 @@ public class SellerDaoJDBC implements SellerDao {
 		ResultSet rs = null;
 
 		try {
-			st = conn.prepareStatement(
-					"SELECT seller.*, department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
+			st = conn.prepareStatement("SELECT seller.*, department.Name as DepName " + 
+		                               "FROM seller INNER JOIN department " + 
+		                               "ON seller.DepartmentId = department.Id " + 
+		                               "WHERE seller.Id = ?");
 
 			st.setInt(1, id);
 
