@@ -1,7 +1,9 @@
 package application;
 
 import java.util.Date;
+import java.util.Scanner;
 
+import db.DbException;
 import model.dao.DaoFactory;
 import model.dao.SellerDao;
 import model.entities.Department;
@@ -12,6 +14,7 @@ public class Program {
 	public static void main(String[] args) {
 		
 		SellerDao sellerDao = DaoFactory.createSellerDao();
+		Scanner sc = new Scanner(System.in);
 		
 		Department department = new Department(2, null);
 		
@@ -33,6 +36,19 @@ public class Program {
 		Seller seller2 = new Seller(null, "Augusto", "augusto@gmail.com", new Date(), 4000.0, department);
 		sellerDao.insert(seller2);
 		System.out.println("Inserted! New id = " + seller2.getId());
+		
+		System.out.println("\n=== TESTING delete ===");
+		System.out.print("Enter id for deletion: ");
+		Integer id = sc.nextInt();
+		try {
+			sellerDao.deleteById(id);
+			System.out.println("Delete complete!");
+		} catch (DbException e) {
+			System.out.println(e.getLocalizedMessage());
+		}
+		
+		
+		sc.close();
 	}
 
 }
