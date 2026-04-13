@@ -47,6 +47,14 @@ public class Program {
 			System.out.println(e.getLocalizedMessage());
 		}
 		
+		System.out.println("\n=== TESTING update ===");
+		seller = sellerDao.findById(4);
+		seller.setName("Alberto Siqueira");
+		seller.setEmail("albertosiqueira@gmail.com");
+		seller.setBaseSalary(3500.90);
+		
+		sellerDao.update(seller);
+		System.out.println("Updated!");
 		
 		sc.close();
 	}
