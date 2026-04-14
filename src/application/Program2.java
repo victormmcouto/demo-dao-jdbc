@@ -14,7 +14,7 @@ public class Program2 {
 		
 		System.out.println("======== TESTING insert ========");
 		deparmentDao.insert(department);
-		System.out.println("Inserted!");
+		System.out.println("Inserted! Generated ID = " + department.getId());
 		
 		System.out.println("======== TESTING update ========");
 		department.setId(1);
