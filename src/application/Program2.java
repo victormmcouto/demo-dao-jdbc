@@ -1,5 +1,6 @@
 package application;
 
+import java.util.List;
 import java.util.Scanner;
 
 import db.DbException;
@@ -38,6 +39,10 @@ public class Program2 {
 		int id = sc.nextInt();
 		department = deparmentDao.findById(id);
 		System.out.println(department);
+		
+		System.out.println("======== TESTING findAll ========");
+		List<Department> departments = deparmentDao.findAll();
+		departments.stream().forEach(System.out::println);
 		
 		sc.close();
 	}
