@@ -1,5 +1,6 @@
 package application;
 
+import db.DbException;
 import model.dao.DaoFactory;
 import model.dao.DepartmentDao;
 import model.entities.Department;
@@ -20,6 +21,14 @@ public class Program2 {
 		department.setName("Clothing");
 		deparmentDao.update(department);
 		System.out.println("Updated!");
+		
+		System.out.println("======== TESTING delete ========");
+		try {
+			deparmentDao.deleteById(7);
+			System.out.println("Deleted!");
+		} catch (DbException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }
